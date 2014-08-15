@@ -9,3 +9,8 @@ gem "warden"
 
 gem "pg"
 gem "dm-postgres-adapter"
+
+group :development do
+	gem "pry"
+	gem "pry-debugger"
+end

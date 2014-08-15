@@ -26,6 +26,8 @@ class Application < Sinatra::Base
 
 	Warden::Strategies.add(:password) do
 		def valid?
+			return false if params.empty?
+
 			params['user']['username'] && params['user']['password']
 		end
 
@@ -74,11 +76,11 @@ class Application < Sinatra::Base
 		puts env['warden.options'][:attempted_path]
 		flash[:error] = env['warden'].message || "You must log in"
 		redirect '/auth/login'
+	end
 
-		get '/protected' do
-			env['warden'].authenticate!
-			@current_user = env['warden'].user
-			erb :protected
-		end
+	get '/protected' do
+		env['warden'].authenticate!
+		@current_user = env['warden'].user
+		erb :protected
 	end
 end

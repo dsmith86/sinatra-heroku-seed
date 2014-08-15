@@ -1,0 +1,9 @@
+<link href="/css/toolbar.css" rel="stylesheet" type="text/css" />
+
+<div id="toolbar">
+	<div id="username">
+		<% unless @current_user.nil? %>
+			<%= "Welcome, #{@current_user.username}!" %>
+		<% end %>
+	</div>
+</div>

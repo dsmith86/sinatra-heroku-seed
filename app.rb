@@ -13,12 +13,17 @@ class Application < Sinatra::Base
 	register SinatraMore::RoutingPlugin
 	register SinatraMore::RenderPlugin
 
+
 	map :auth do |namespace|
 		namespace.map(:index).to("/")
 		namespace.map(:login).to("/auth/login")
 		namespace.map(:logout).to("/auth/logout")
 		namespace.map(:unauthenticated).to("/auth/unauthenticated")
 		namespace.map(:protected).to("/protected")
+	end
+
+	map :dashboard do |namespace|
+		namespace.map(:home).to("/dashboard")
 	end
 
 	use Warden::Manager do |config|
@@ -56,6 +61,7 @@ class Application < Sinatra::Base
 
 	namespace :auth do
 		get :index do
+			@current_user = env['warden'].user
 			erb_template '/index'
 		end
 
@@ -69,7 +75,7 @@ class Application < Sinatra::Base
 			flash[:success] = env['warden'].message
 
 			if session[:return_to].nil?
-				redirect '/'
+				redirect url_for(:dashboard, :home)
 			else
 				redirect session[:return_to]
 			end
@@ -92,8 +98,15 @@ class Application < Sinatra::Base
 		get :protected do
 			env['warden'].authenticate!
 			@current_user = env['warden'].user
-			puts @current_user
 			erb :protected
+		end
+	end
+
+	namespace :dashboard do
+		get :home do
+			env['warden'].authenticate!
+			@current_user = env['warden'].user
+			erb_template '/dashboard'
 		end
 	end
 

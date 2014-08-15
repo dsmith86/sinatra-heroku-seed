@@ -42,6 +42,10 @@ class Application < Sinatra::Base
 	end
 
 	get '/' do
-		'Hello World!'
+		erb :index
+	end
+
+	get '/auth/login' do
+		erb :login
 	end
 end

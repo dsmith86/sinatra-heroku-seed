@@ -10,6 +10,15 @@ require './models/user'
 class Application < Sinatra::Base
 	enable :sessions
 	register Sinatra::Flash
+	register SinatraMore::RoutingPlugin
+
+	map :auth do |namespace|
+		namespace.map(:index).to("/")
+		namespace.map(:login).to("/auth/login")
+		namespace.map(:logout).to("/auth/logout")
+		namespace.map(:unauthenticated).to("/auth/unauthenticated")
+		namespace.map(:protected).to("/protected")
+	end
 
 	use Warden::Manager do |config|
 		config.serialize_into_session {|user| user.id}
@@ -44,43 +53,46 @@ class Application < Sinatra::Base
 		end
 	end
 
-	get '/' do
-		erb :index
-	end
+	namespace :auth do
+		get :index do
+			erb :index
+		end
 
-	get '/auth/login' do
-		erb :login
-	end
+		get :login do
+			erb :login
+		end
 
-	post '/auth/login' do
-		env['warden'].authenticate!
+		post :login do
+			env['warden'].authenticate!
 
-		flash[:success] = env['warden'].message
+			flash[:success] = env['warden'].message
 
-		if session[:return_to].nil?
+			if session[:return_to].nil?
+				redirect '/'
+			else
+				redirect session[:return_to]
+			end
+		end
+
+		get :logout do
+			env['warden'].raw_session.inspect
+			env['warden'].logout
+			flash[:success] = 'Successfully logged out'
 			redirect '/'
-		else
-			redirect session[:return_to]
+		end
+
+		post :unauthenticated do
+			session[:return_to] = env['warden.options'][:attempted_path]	
+			puts env['warden.options'][:attempted_path]
+			flash[:error] = env['warden'].message || "You must log in"
+			redirect '/auth/login'
+		end
+
+		get :protected do
+			env['warden'].authenticate!
+			@current_user = env['warden'].user
+			erb :protected
 		end
 	end
 
-	get '/auth/logout' do
-		env['warden'].raw_session.inspect
-		env['warden'].logout
-		flash[:success] = 'Successfully logged out'
-		redirect '/'
-	end
-
-	post '/auth/unauthenticated' do
-		session[:return_to] = env['warden.options'][:attempted_path]	
-		puts env['warden.options'][:attempted_path]
-		flash[:error] = env['warden'].message || "You must log in"
-		redirect '/auth/login'
-	end
-
-	get '/protected' do
-		env['warden'].authenticate!
-		@current_user = env['warden'].user
-		erb :protected
-	end
 end

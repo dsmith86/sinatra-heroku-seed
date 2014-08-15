@@ -6,6 +6,8 @@ gem "sinatra"
 gem "sinatra-flash"
 gem "data_mapper"
 gem "warden"
+gem "sinatra_more"
+gem "actionmailer"
 
 gem "pg"
 gem "dm-postgres-adapter"

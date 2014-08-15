@@ -11,6 +11,7 @@ class Application < Sinatra::Base
 	enable :sessions
 	register Sinatra::Flash
 	register SinatraMore::RoutingPlugin
+	register SinatraMore::RenderPlugin
 
 	map :auth do |namespace|
 		namespace.map(:index).to("/")
@@ -55,7 +56,7 @@ class Application < Sinatra::Base
 
 	namespace :auth do
 		get :index do
-			erb :index
+			erb_template '/index'
 		end
 
 		get :login do
@@ -91,6 +92,7 @@ class Application < Sinatra::Base
 		get :protected do
 			env['warden'].authenticate!
 			@current_user = env['warden'].user
+			puts @current_user
 			erb :protected
 		end
 	end

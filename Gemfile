@@ -15,4 +15,5 @@ gem "dm-postgres-adapter"
 group :development do
 	gem "pry"
 	gem "pry-debugger"
+	gem "shotgun"
 end

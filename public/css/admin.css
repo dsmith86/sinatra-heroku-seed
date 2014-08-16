@@ -1,0 +1,21 @@
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+div#toolbar {
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #CCCCCC;
+	margin-bottom: 30px;
+}
+
+div#toolbar div {
+	display: inline;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+div.container {
+	margin: 20px;
+}

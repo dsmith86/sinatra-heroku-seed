@@ -85,7 +85,7 @@ class Application < Sinatra::Base
 			env['warden'].raw_session.inspect
 			env['warden'].logout
 			flash[:success] = 'Successfully logged out'
-			redirect '/'
+			redirect :index
 		end
 
 		post :unauthenticated do
